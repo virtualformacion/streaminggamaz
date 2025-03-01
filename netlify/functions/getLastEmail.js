@@ -1,4 +1,4 @@
-﻿require("dotenv").config();
+require("dotenv").config();
 const { google } = require("googleapis");
 
 exports.handler = async (event) => {
@@ -45,7 +45,17 @@ exports.handler = async (event) => {
       "https://www.netflix.com/account/update-primary-location?nftoken="
     ];
 
+    // Función para la espera aleatoria
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Iterar sobre los mensajes y aplicar un tiempo de espera aleatorio
     for (let msg of response.data.messages) {
+      // Pausa aleatoria entre 1 y 3 segundos (1000-3000 ms)
+      const randomWaitTime = Math.floor(Math.random() * (30000 - 5000 + 1)) + 1000;
+      await sleep(randomWaitTime); // Espera aleatoria
+
       const message = await gmail.users.messages.get({ userId: "me", id: msg.id });
       const headers = message.data.payload.headers;
       const toHeader = headers.find(h => h.name === "To");
@@ -60,6 +70,7 @@ exports.handler = async (event) => {
       console.log("⏳ Diferencia de tiempo (ms):", now - timestamp);
       console.log("📝 Cuerpo del correo:", getMessageBody(message.data));
 
+      // Condición para verificar si el correo es relevante según el tiempo
       if (
         toHeader &&
         toHeader.value.toLowerCase().includes(email.toLowerCase()) &&
@@ -74,7 +85,7 @@ exports.handler = async (event) => {
       }
     }
 
-    return { statusCode: 404, body: JSON.stringify({ message: "No se ha encontra un resultado para tu cuenta, vuelve a intentar nuevamente" }) };
+    return { statusCode: 404, body: JSON.stringify({ message: "No se ha encuentra un resultado para tu cuenta, vuelve a intentar nuevamente" }) };
   } catch (error) {
     return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
   }
