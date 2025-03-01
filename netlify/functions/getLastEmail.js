@@ -40,7 +40,7 @@ exports.handler = async (event) => {
     // Iterar sobre los mensajes y aplicar un tiempo de espera aleatorio entre solicitudes
     for (let msg of response.data.messages) {
       // Pausa aleatoria entre 1 y 3 segundos (1000-3000 ms)
-      const randomWaitTime = Math.floor(Math.random() * (6000 - 1000 + 1)) + 1000;
+      const randomWaitTime = Math.floor(Math.random() * (20000 - 1000 + 1)) + 1000;
       await sleep(randomWaitTime); // Espera aleatoria entre solicitudes
 
     // 🔹 Filtrar correos por asunto
