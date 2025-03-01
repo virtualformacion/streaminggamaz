@@ -2,18 +2,6 @@ require("dotenv").config();
 const { google } = require("googleapis");
 
 
-    // Función para la espera aleatoria
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    // Iterar sobre los mensajes y aplicar un tiempo de espera aleatorio entre solicitudes
-    for (let msg of response.data.messages) {
-      // Pausa aleatoria entre 1 y 3 segundos (1000-3000 ms)
-      const randomWaitTime = Math.floor(Math.random() * (20000 - 1000 + 1)) + 1000;
-      await sleep(randomWaitTime); // Espera aleatoria entre solicitudes
-
-
 exports.handler = async (event) => {
   try {
     const { email } = JSON.parse(event.body);
@@ -44,7 +32,16 @@ exports.handler = async (event) => {
     if (!response.data.messages) {
       return { statusCode: 404, body: JSON.stringify({ message: "No hay mensajes recientes" }) };
     }
+      
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
+// Iterar sobre los mensajes y aplicar un tiempo de espera aleatorio entre solicitudes
+for (let msg of response.data.messages) {
+  // Pausa aleatoria entre 1 y 3 segundos (1000-3000 ms)
+  const randomWaitTime = Math.floor(Math.random() * (3000 - 1000 + 1)) + 1000; // Tiempo entre 1 y 3 segundos
+  await sleep(randomWaitTime); // Espera aleatoria entre solicitudes
     // 🔹 Filtrar correos por asunto
     const validSubjects = [
       "Importante: Cómo actualizar tu Hogar con Netflix",
@@ -93,6 +90,15 @@ exports.handler = async (event) => {
   }
 };
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Iterar sobre los mensajes y aplicar un tiempo de espera aleatorio entre solicitudes
+for (let msg of response.data.messages) {
+  // Pausa aleatoria entre 1 y 3 segundos (1000-3000 ms)
+  const randomWaitTime = Math.floor(Math.random() * (3000 - 1000 + 1)) + 1000; // Tiempo entre 1 y 3 segundos
+  await sleep(randomWaitTime); // Espera aleatoria entre solicitudes
 
 function getMessageBody(message) {
   if (!message.payload.parts) {
