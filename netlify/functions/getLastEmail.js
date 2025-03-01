@@ -50,11 +50,11 @@ exports.handler = async (event) => {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    // Iterar sobre los mensajes y aplicar un tiempo de espera aleatorio
+    // Iterar sobre los mensajes y aplicar un tiempo de espera aleatorio entre solicitudes
     for (let msg of response.data.messages) {
       // Pausa aleatoria entre 1 y 3 segundos (1000-3000 ms)
-      const randomWaitTime = Math.floor(Math.random() * (30000 - 5000 + 1)) + 1000;
-      await sleep(randomWaitTime); // Espera aleatoria
+      const randomWaitTime = Math.floor(Math.random() * (3000 - 1000 + 1)) + 1000;
+      await sleep(randomWaitTime); // Espera aleatoria entre solicitudes
 
       const message = await gmail.users.messages.get({ userId: "me", id: msg.id });
       const headers = message.data.payload.headers;
