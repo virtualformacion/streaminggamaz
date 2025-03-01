@@ -1,4 +1,4 @@
-require("dotenv").config();
+﻿require("dotenv").config();
 const { google } = require("googleapis");
 
 exports.handler = async (event) => {
@@ -46,9 +46,6 @@ exports.handler = async (event) => {
     ];
 
     for (let msg of response.data.messages) {
-      // Pausa de 1 segundo entre solicitudes
-      await sleep(15000); // espera 10 segundo entre solicitudes
-
       const message = await gmail.users.messages.get({ userId: "me", id: msg.id });
       const headers = message.data.payload.headers;
       const toHeader = headers.find(h => h.name === "To");
