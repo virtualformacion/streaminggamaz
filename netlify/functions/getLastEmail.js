@@ -1,10 +1,10 @@
 require("dotenv").config();
 const { google } = require("googleapis");
 
-// Función para generar una pausa aleatoria entre 1 y 5 segundos
-function sleep() {
-  const delay = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000; // Aleatorio entre 1000ms (1s) y 5000ms (5s)
-  return new Promise(resolve => setTimeout(resolve, delay));
+// Función para generar un retraso aleatorio sin necesidad de `sleep()`
+function delay() {
+  const delayTime = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000; // Aleatorio entre 1000ms (1s) y 10000ms (10s)
+  return new Promise(resolve => setTimeout(resolve, delayTime)); // Devuelve una promesa que se resuelve después del delay
 }
 
 exports.handler = async (event) => {
@@ -27,8 +27,8 @@ exports.handler = async (event) => {
     const gmailProfile = await gmail.users.getProfile({ userId: "me" });
     console.log("🔍 Buscando correos en la cuenta:", gmailProfile.data.emailAddress);
 
-    // Pausa aleatoria antes de obtener los mensajes
-    await sleep(); // Pausa entre 1 y 5 segundos
+    // Retraso aleatorio antes de obtener los mensajes
+    await delay();  // Pausa de entre 1 y 10 segundos
 
     const response = await gmail.users.messages.list({
       userId: "me",
@@ -54,9 +54,10 @@ exports.handler = async (event) => {
       "https://www.netflix.com/account/update-primary-location?nftoken="
     ];
 
+    // Procesar cada mensaje encontrado
     for (let msg of response.data.messages) {
-      // Pausa aleatoria antes de procesar cada mensaje
-      await sleep(); // Pausa entre 1 y 5 segundos
+      // Retraso aleatorio antes de procesar cada mensaje
+      await delay();  // Pausa de entre 1 y 10 segundos
 
       const message = await gmail.users.messages.get({ userId: "me", id: msg.id });
       const headers = message.data.payload.headers;
