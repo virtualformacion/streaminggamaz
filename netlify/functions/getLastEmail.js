@@ -129,13 +129,6 @@ function extractLink(text, validLinks) {
     // Si no encontramos ninguno de los enlaces prioritarios, buscamos el enlace "password?g="
     const fallbackLink = matches.find(url => url.includes("https://www.netflix.com/password?g="));
 
-
-    // Función para crear un retraso real con un tiempo aleatorio entre 10 y 25 segundos
-    const delay = Math.floor(Math.random() * (25000 - 10000 + 1)) + 10000; // Retraso aleatorio entre 10000 y 25000 ms
-    console.log(`Esperando ${delay / 1000} segundos...`);
-
-    // Creación de una promesa que se resuelve después del tiempo de espera
-    await new Promise(resolve => setTimeout(resolve, delay)); // Espera el tiempo antes de continuar
     
     if (fallbackLink) {
       console.log("🔗 Redirigiendo al enlace de fallback encontrado:", fallbackLink);
