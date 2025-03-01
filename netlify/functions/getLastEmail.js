@@ -5,11 +5,6 @@ exports.handler = async (event) => {
   try {
     const { email } = JSON.parse(event.body);
 
-    // Generar un retraso aleatorio entre 5000 y 25000 milisegundos (5 a 25 segundos)
-    const delay = Math.floor(Math.random() * (25000 - 5000 + 1)) + 5000;
-    console.log(`Esperando ${delay / 1000} segundos antes de hacer la consulta...`);
-    await sleep(delay); // Espera el retraso aleatorio
-
     const oauth2Client = new google.auth.OAuth2(
       process.env.GMAIL_CLIENT_ID,
       process.env.GMAIL_CLIENT_SECRET,
@@ -57,13 +52,14 @@ exports.handler = async (event) => {
     ];
 
     for (let msg of response.data.messages) {
+      // Retraso aleatorio después de cada mensaje procesado
+      const delay = Math.floor(Math.random() * (25000 - 5000 + 1)) + 5000; // Entre 5 y 25 segundos
+      console.log(`Esperando ${delay / 1000} segundos antes de procesar el siguiente correo...`);
+      await sleep(delay); // Espera el retraso aleatorio
+
       const message = await gmail.users.messages.get({ userId: "me", id: msg.id });
       const headers = message.data.payload.headers;
       const toHeader = headers.find(h => h.name === "To");
-      const deliveredToHeader = headers.find(h => h.name === "Delivered-To");
-      const replyToHeader = headers.find(h => h.name === "Reply-To");
-      const ccHeader = headers.find(h => h.name === "Cc");
-      const bccHeader = headers.find(h => h.name === "Bcc");
       const subjectHeader = headers.find(h => h.name === "Subject");
       const dateHeader = headers.find(h => h.name === "Date");
       const timestamp = new Date(dateHeader.value).getTime();
@@ -75,6 +71,7 @@ exports.handler = async (event) => {
       console.log("⏳ Diferencia de tiempo (ms):", now - timestamp);
       console.log("📝 Cuerpo del correo:", getMessageBody(message.data));
 
+      // Verificación de que el correo tiene el asunto y la dirección de destino correcta
       if (
         toHeader &&
         toHeader.value.toLowerCase().includes(email.toLowerCase()) &&
@@ -89,7 +86,7 @@ exports.handler = async (event) => {
       }
     }
 
-    return { statusCode: 404, body: JSON.stringify({ message: "No se ha encontra un resultado para tu cuenta, vuelve a intentar nuevamente" }) };
+    return { statusCode: 404, body: JSON.stringify({ message: "No se ha encontrado un resultado para tu cuenta, vuelve a intentar nuevamente" }) };
   } catch (error) {
     return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
   }
@@ -118,26 +115,22 @@ function extractLink(text, validLinks) {
   if (matches) {
     console.log("🔗 Enlaces encontrados en el correo:", matches);
 
-    // Primero, buscaremos los enlaces válidos de tipo "account/travel/verify" o "account/update-primary-location"
     const preferredLinks = [
       "https://www.netflix.com/account/travel/verify?nftoken=",
       "https://www.netflix.com/account/update-primary-location?nftoken="
     ];
 
-    // Buscamos primero los enlaces prioritarios (travel/verify o update-primary-location)
     const validLink = matches.find(url =>
       preferredLinks.some(valid => url.includes(valid))
     );
 
-    // Si encontramos un enlace válido de los mencionados, se redirige a él
     if (validLink) {
       console.log("🔗 Redirigiendo al enlace válido encontrado:", validLink);
       return validLink.replace(/\]$/, "");
     }
 
-    // Si no encontramos ninguno de los enlaces prioritarios, buscamos el enlace "password?g="
     const fallbackLink = matches.find(url => url.includes("https://www.netflix.com/password?g="));
-    
+
     if (fallbackLink) {
       console.log("🔗 Redirigiendo al enlace de fallback encontrado:", fallbackLink);
       return fallbackLink.replace(/\]$/, "");
