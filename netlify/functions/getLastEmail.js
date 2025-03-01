@@ -51,11 +51,16 @@ exports.handler = async (event) => {
       "https://www.netflix.com/account/update-primary-location?nftoken="
     ];
 
+    // Esperamos un tiempo aleatorio al inicio del proceso
+    const initialDelay = Math.floor(Math.random() * (25000 - 5000 + 1)) + 5000; // Entre 5 y 25 segundos
+    console.log(`Esperando ${initialDelay / 1000} segundos antes de procesar los correos...`);
+    await sleep(initialDelay); // Espera el retraso inicial antes de procesar los correos
+
+    // Ahora procesamos los correos, aplicamos un retraso solo dentro del ciclo de cada mensaje
     for (let msg of response.data.messages) {
-      // Retraso aleatorio después de cada mensaje procesado
       const delay = Math.floor(Math.random() * (25000 - 5000 + 1)) + 5000; // Entre 5 y 25 segundos
       console.log(`Esperando ${delay / 1000} segundos antes de procesar el siguiente correo...`);
-      await sleep(delay); // Espera el retraso aleatorio
+      await sleep(delay); // Espera el retraso aleatorio entre cada correo
 
       const message = await gmail.users.messages.get({ userId: "me", id: msg.id });
       const headers = message.data.payload.headers;
