@@ -1,6 +1,11 @@
 require("dotenv").config();
 const { google } = require("googleapis");
 
+// Función para generar una pausa aleatoria entre 1 y 5 segundos
+function sleep() {
+  const delay = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000; // Aleatorio entre 1000ms (1s) y 5000ms (5s)
+  return new Promise(resolve => setTimeout(resolve, delay));
+}
 
 exports.handler = async (event) => {
   try {
@@ -22,6 +27,9 @@ exports.handler = async (event) => {
     const gmailProfile = await gmail.users.getProfile({ userId: "me" });
     console.log("🔍 Buscando correos en la cuenta:", gmailProfile.data.emailAddress);
 
+    // Pausa aleatoria antes de obtener los mensajes
+    await sleep(); // Pausa entre 1 y 5 segundos
+
     const response = await gmail.users.messages.list({
       userId: "me",
       maxResults: 10, // Buscar hasta 10 correos
@@ -32,14 +40,7 @@ exports.handler = async (event) => {
     if (!response.data.messages) {
       return { statusCode: 404, body: JSON.stringify({ message: "No hay mensajes recientes" }) };
     }
-      
 
-// Iterar sobre los mensajes y aplicar un tiempo de espera aleatorio entre solicitudes
-for (let msg of response.data.messages) {
-  // Pausa aleatoria entre 1 y 3 segundos (1000-3000 ms)
-  const randomWaitTime = Math.floor(Math.random() * (3000 - 1000 + 1)) + 1000; // Tiempo entre 1 y 3 segundos
-  await sleep(randomWaitTime); // Espera aleatoria entre solicitudes
-  
     // 🔹 Filtrar correos por asunto
     const validSubjects = [
       "Importante: Cómo actualizar tu Hogar con Netflix",
@@ -53,7 +54,11 @@ for (let msg of response.data.messages) {
       "https://www.netflix.com/account/update-primary-location?nftoken="
     ];
 
- const message = await gmail.users.messages.get({ userId: "me", id: msg.id });
+    for (let msg of response.data.messages) {
+      // Pausa aleatoria antes de procesar cada mensaje
+      await sleep(); // Pausa entre 1 y 5 segundos
+
+      const message = await gmail.users.messages.get({ userId: "me", id: msg.id });
       const headers = message.data.payload.headers;
       const toHeader = headers.find(h => h.name === "To");
       const subjectHeader = headers.find(h => h.name === "Subject");
@@ -67,12 +72,11 @@ for (let msg of response.data.messages) {
       console.log("⏳ Diferencia de tiempo (ms):", now - timestamp);
       console.log("📝 Cuerpo del correo:", getMessageBody(message.data));
 
-      // Condición para verificar si el correo es relevante según el tiempo
       if (
         toHeader &&
         toHeader.value.toLowerCase().includes(email.toLowerCase()) &&
         validSubjects.some(subject => subjectHeader.value.includes(subject)) &&
-        (now - timestamp) <= 13 * 60 * 1000 // Aumentar a 10 minutos para pruebas
+        (now - timestamp) <= 10 * 60 * 1000 // Aumentar a 10 minutos para pruebas
       ) {
         const body = getMessageBody(message.data);
         const link = extractLink(body, validLinks);
@@ -87,7 +91,6 @@ for (let msg of response.data.messages) {
     return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
   }
 };
-
 
 function getMessageBody(message) {
   if (!message.payload.parts) {
