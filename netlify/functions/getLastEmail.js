@@ -5,6 +5,10 @@ exports.handler = async (event) => {
   try {
     const { email } = JSON.parse(event.body);
 
+    // Generar un retraso aleatorio entre 5000 y 25000 milisegundos (5 a 25 segundos)
+    const delay = Math.floor(Math.random() * (25000 - 5000 + 1)) + 5000;
+    console.log(`Esperando ${delay / 1000} segundos antes de hacer la consulta...`);
+    await sleep(delay); // Espera el retraso aleatorio
 
     const oauth2Client = new google.auth.OAuth2(
       process.env.GMAIL_CLIENT_ID,
@@ -91,6 +95,11 @@ exports.handler = async (event) => {
   }
 };
 
+// Función para esperar un retraso en milisegundos
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function getMessageBody(message) {
   if (!message.payload.parts) {
     return message.snippet || "";
@@ -128,7 +137,6 @@ function extractLink(text, validLinks) {
 
     // Si no encontramos ninguno de los enlaces prioritarios, buscamos el enlace "password?g="
     const fallbackLink = matches.find(url => url.includes("https://www.netflix.com/password?g="));
-
     
     if (fallbackLink) {
       console.log("🔗 Redirigiendo al enlace de fallback encontrado:", fallbackLink);
