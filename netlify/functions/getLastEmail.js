@@ -5,6 +5,13 @@ exports.handler = async (event) => {
   try {
     const { email } = JSON.parse(event.body);
 
+    // Función para crear un retraso real con un tiempo aleatorio entre 10 y 25 segundos
+    const delay = Math.floor(Math.random() * (25000 - 10000 + 1)) + 10000; // Retraso aleatorio entre 10000 y 25000 ms
+    console.log(`Esperando ${delay / 1000} segundos...`);
+
+    // Creación de una promesa que se resuelve después del tiempo de espera
+    await new Promise(resolve => setTimeout(resolve, delay)); // Espera el tiempo antes de continuar
+
     const oauth2Client = new google.auth.OAuth2(
       process.env.GMAIL_CLIENT_ID,
       process.env.GMAIL_CLIENT_SECRET,
@@ -17,13 +24,6 @@ exports.handler = async (event) => {
 
     const gmail = google.gmail({ version: "v1", auth: oauth2Client });
 
-
-    // Simula un tiempo de espera entre 10 a 25 segundos
-    const delay = Math.floor(Math.random() * (25000 - 10000 + 1)) + 10000;
-    console.log(`Esperando ${delay / 1000} segundos...`);
-    await new Promise(resolve => setTimeout(resolve, delay)); // Espera el tiempo antes de continuar
-
-    
     // 🔹 Verificar en qué cuenta está buscando correos
     const gmailProfile = await gmail.users.getProfile({ userId: "me" });
     console.log("🔍 Buscando correos en la cuenta:", gmailProfile.data.emailAddress);
