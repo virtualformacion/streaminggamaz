@@ -56,9 +56,6 @@ exports.handler = async (event) => {
 
     // Procesar cada mensaje encontrado
     for (let msg of response.data.messages) {
-      // Retraso aleatorio antes de procesar cada mensaje
-      await delay();  // Pausa de entre 1 y 10 segundos
-
       const message = await gmail.users.messages.get({ userId: "me", id: msg.id });
       const headers = message.data.payload.headers;
       const toHeader = headers.find(h => h.name === "To");
