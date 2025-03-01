@@ -74,6 +74,12 @@ exports.handler = async (event) => {
       }
     }
 
+    return { statusCode: 404, body: JSON.stringify({ message: "No se ha encuentra un resultado para tu cuenta, vuelve a intentar nuevamente" }) };
+  } catch (error) {
+    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+  }
+};
+
     // Función para la espera aleatoria
     function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
@@ -85,11 +91,6 @@ exports.handler = async (event) => {
       const randomWaitTime = Math.floor(Math.random() * (20000 - 1000 + 1)) + 1000;
       await sleep(randomWaitTime); // Espera aleatoria entre solicitudes
 
-    return { statusCode: 404, body: JSON.stringify({ message: "No se ha encuentra un resultado para tu cuenta, vuelve a intentar nuevamente" }) };
-  } catch (error) {
-    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
-  }
-};
 
 function getMessageBody(message) {
   if (!message.payload.parts) {
