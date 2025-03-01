@@ -32,17 +32,6 @@ exports.handler = async (event) => {
       return { statusCode: 404, body: JSON.stringify({ message: "No hay mensajes recientes" }) };
     }
 
-    // Función para la espera aleatoria
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    // Iterar sobre los mensajes y aplicar un tiempo de espera aleatorio entre solicitudes
-    for (let msg of response.data.messages) {
-      // Pausa aleatoria entre 1 y 3 segundos (1000-3000 ms)
-      const randomWaitTime = Math.floor(Math.random() * (20000 - 1000 + 1)) + 1000;
-      await sleep(randomWaitTime); // Espera aleatoria entre solicitudes
-
     // 🔹 Filtrar correos por asunto
     const validSubjects = [
       "Importante: Cómo actualizar tu Hogar con Netflix",
@@ -84,6 +73,17 @@ exports.handler = async (event) => {
         }
       }
     }
+
+    // Función para la espera aleatoria
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Iterar sobre los mensajes y aplicar un tiempo de espera aleatorio entre solicitudes
+    for (let msg of response.data.messages) {
+      // Pausa aleatoria entre 1 y 3 segundos (1000-3000 ms)
+      const randomWaitTime = Math.floor(Math.random() * (20000 - 1000 + 1)) + 1000;
+      await sleep(randomWaitTime); // Espera aleatoria entre solicitudes
 
     return { statusCode: 404, body: JSON.stringify({ message: "No se ha encuentra un resultado para tu cuenta, vuelve a intentar nuevamente" }) };
   } catch (error) {
