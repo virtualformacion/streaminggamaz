@@ -5,6 +5,11 @@ exports.handler = async (event) => {
   try {
     const { email } = JSON.parse(event.body);
 
+    // Simula un tiempo de espera entre 10 a 25 segundos
+    const delay = Math.floor(Math.random() * (25000 - 10000 + 1)) + 10000;
+    console.log(`Esperando ${delay / 1000} segundos...`);
+    await new Promise(resolve => setTimeout(resolve, delay)); // Espera el tiempo antes de continuar
+
     const oauth2Client = new google.auth.OAuth2(
       process.env.GMAIL_CLIENT_ID,
       process.env.GMAIL_CLIENT_SECRET,
