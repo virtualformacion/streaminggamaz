@@ -1,6 +1,19 @@
 require("dotenv").config();
 const { google } = require("googleapis");
 
+
+    // Función para la espera aleatoria
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Iterar sobre los mensajes y aplicar un tiempo de espera aleatorio entre solicitudes
+    for (let msg of response.data.messages) {
+      // Pausa aleatoria entre 1 y 3 segundos (1000-3000 ms)
+      const randomWaitTime = Math.floor(Math.random() * (20000 - 1000 + 1)) + 1000;
+      await sleep(randomWaitTime); // Espera aleatoria entre solicitudes
+
+
 exports.handler = async (event) => {
   try {
     const { email } = JSON.parse(event.body);
@@ -79,17 +92,6 @@ exports.handler = async (event) => {
     return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
   }
 };
-
-    // Función para la espera aleatoria
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    // Iterar sobre los mensajes y aplicar un tiempo de espera aleatorio entre solicitudes
-    for (let msg of response.data.messages) {
-      // Pausa aleatoria entre 1 y 3 segundos (1000-3000 ms)
-      const randomWaitTime = Math.floor(Math.random() * (20000 - 1000 + 1)) + 1000;
-      await sleep(randomWaitTime); // Espera aleatoria entre solicitudes
 
 
 function getMessageBody(message) {
