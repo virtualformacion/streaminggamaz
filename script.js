@@ -12,7 +12,7 @@ document.getElementById("emailForm").addEventListener("submit", async function(e
     loadingMessage.style.left = "50%";
     loadingMessage.style.transform = "translate(-50%, -50%)";
     loadingMessage.style.padding = "10px 20px";
-    loadingMessage.style.backgroundColor = "#f0f0f0";
+    loadingMessage.style.backgroundColor = "#000000";
     loadingMessage.style.border = "1px solid #ccc";
     loadingMessage.style.borderRadius = "5px";
     loadingMessage.style.fontSize = "16px";
