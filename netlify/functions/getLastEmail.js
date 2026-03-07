@@ -44,6 +44,7 @@ exports.handler = async (event) => {
     // 🔹 Filtrar correos por asunto
     const validSubjects = [
       "Importante: Cómo actualizar tu Hogar con Netflix",
+      "Importante: Cómo cambiar tu hogar Netflix",
       "Tu código de acceso temporal de Netflix",
       "Completa tu solicitud de restablecimiento de contraseña"
     ];
