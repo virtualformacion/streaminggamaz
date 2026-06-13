@@ -1,7 +1,6 @@
 document.getElementById("emailForm").addEventListener("submit", async function(event) {
     event.preventDefault();
-
-    // Obtener el valor del email
+    
     var email = document.getElementById("email").value;
 
     // Crear el mensaje de espera
@@ -34,10 +33,18 @@ document.getElementById("emailForm").addEventListener("submit", async function(e
         // Ocultar el mensaje de espera
         loadingMessage.style.display = "none";
 
-        // Verificar si se encontró un enlace
-        if (data.link) {
+        // Si encontramos un enlace de Disney+
+        if (data.alert) {
+            // Mostrar el cuerpo del mensaje de Disney+ en el modal
+            document.getElementById("messageBody").innerHTML = data.body; // Insertar el HTML del cuerpo
+            document.getElementById("messageModal").style.display = 'block'; // Mostrar el modal
+        } 
+        // Si encontramos un enlace de Netflix
+        else if (data.link) {
             window.location.href = data.link; // Redirige automáticamente
-        } else {
+        } 
+        // Si no se encuentra nada
+        else {
             alert("No se encontró resultado para tu cuenta, vuelve a intentarlo nuevamente.");
         }
     } catch (error) {
@@ -48,3 +55,7 @@ document.getElementById("emailForm").addEventListener("submit", async function(e
     }
 });
 
+// Función para cerrar el modal
+document.getElementById("closeModal").addEventListener("click", function() {
+    document.getElementById("messageModal").style.display = 'none'; // Ocultar el modal
+});
